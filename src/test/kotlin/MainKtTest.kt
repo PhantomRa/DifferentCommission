@@ -33,5 +33,8 @@ class MainKtTest {
 //        Отрицательный перевод или 0
         assertEquals(-1, calcCommission(amountTransfer = -15_000_00))
         assertEquals(-1, calcCommission(amountTransfer = 0))
+
+//        Ломает сборку
+        assertEquals(1, calcCommission(amountTransfer = 0))
     }
 }
