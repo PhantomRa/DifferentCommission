@@ -35,6 +35,6 @@ class MainKtTest {
         assertEquals(-1, calcCommission(amountTransfer = 0))
 
 //        Ломает сборку
-        assertEquals(1, calcCommission(amountTransfer = 0))
+//        assertEquals(1, calcCommission(amountTransfer = 0))
     }
 }
