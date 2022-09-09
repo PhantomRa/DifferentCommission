@@ -1,39 +1,55 @@
 import org.junit.Test
 
 import org.junit.Assert.*
+import ru.netology.CommissionCalc.Companion.CARD_TYPE_ERROR
+import ru.netology.CommissionCalc.Companion.TRANSFER_ERROR
+import ru.netology.CommissionCalc.Companion.TRANSFER_LIMIT_ERROR
+import ru.netology.CommissionCalc.Companion.TYPE_CARD_MAESTRO
+import ru.netology.CommissionCalc.Companion.TYPE_CARD_MASTERCARD
+import ru.netology.CommissionCalc.Companion.TYPE_CARD_MIR
+import ru.netology.CommissionCalc.Companion.TYPE_CARD_VISA
+import ru.netology.CommissionCalc.Companion.TYPE_CARD_VK_PAY
 import ru.netology.CommissionCalc.Companion.calcCommission
 
 class MainKtTest {
 
     @Test
-    fun calcCommissionTest() {
+    fun zeroTransferTest() {
+        assertEquals(TRANSFER_ERROR, calcCommission(TYPE_CARD_MASTERCARD, amountTransfer = 0))
+        assertEquals(TRANSFER_ERROR, calcCommission(TYPE_CARD_VISA, amountTransfer = 0))
+        assertEquals(TRANSFER_ERROR, calcCommission(amountTransfer = 0))
+    }
 
-//        "Mastercard" & "Maestro"
-        assertEquals(-1, calcCommission("Maestro", amountTransfer = 0))
-        assertEquals(0, calcCommission("Maestro", 150_000_00, 45_000_00))
-        assertEquals(890_00, calcCommission("Maestro", 150_000_00, 145_000_00))
-        assertEquals(-1, calcCommission("Mastercard", amountTransfer = 245_000_00))
-        assertEquals(-1, calcCommission("Maestro", 570_000_00, 45_000_00))
+    @Test
+    fun limitTransferTest() {
+        assertEquals(TRANSFER_LIMIT_ERROR, calcCommission(TYPE_CARD_MASTERCARD, 550_000_00, 70_000_00))
+        assertEquals(TRANSFER_ERROR, calcCommission(TYPE_CARD_MAESTRO, amountTransfer = 170_000_00))
+        assertEquals(TRANSFER_LIMIT_ERROR, calcCommission(TYPE_CARD_VISA, 550_000_00, 70_000_00))
+        assertEquals(TRANSFER_ERROR, calcCommission(TYPE_CARD_MIR, amountTransfer = 170_000_00))
+        assertEquals(TRANSFER_LIMIT_ERROR, calcCommission(sumInMonth = 50_000_00, amountTransfer = 7_000_00))
+        assertEquals(TRANSFER_ERROR, calcCommission(amountTransfer = 20_000_00))
+        assertEquals(TRANSFER_ERROR, calcCommission(TYPE_CARD_VISA, amountTransfer = 20_00))
+        assertEquals(TRANSFER_LIMIT_ERROR, calcCommission(TYPE_CARD_MASTERCARD, amountTransfer = -50_000_00))
+        assertEquals(TRANSFER_LIMIT_ERROR, calcCommission(TYPE_CARD_VISA, amountTransfer = -50_000_00))
+        assertEquals(TRANSFER_LIMIT_ERROR, calcCommission(TYPE_CARD_VK_PAY, amountTransfer = -5_000_00))
+    }
 
-//        "Visa" & "Мир"
-        assertEquals(-1, calcCommission("Visa", amountTransfer = 30_00))
-        assertEquals(337_50, calcCommission("Visa", 150_000_00, 45_000_00))
-        assertEquals(1_087_50, calcCommission("Visa", amountTransfer = 145_000_00))
-        assertEquals(-1, calcCommission("Visa", 570_000_00, 45_000_00))
+    @Test
+    fun cardTypeErrorTest() {
+        assertEquals(CARD_TYPE_ERROR, calcCommission("CARD", amountTransfer = 500))
+    }
 
-//        "VK Pay"
-        assertEquals(-1, calcCommission(amountTransfer = 0))
-        assertEquals(0, calcCommission("VK Pay", 20_000_00, 12_000_00))
-        assertEquals(-1, calcCommission(amountTransfer = 25_000_00))
-        assertEquals(-1, calcCommission(sumInMonth = 35_000_00, amountTransfer = 10_000_00))
+    @Test
+    fun transferTest() {
+        assertEquals(0, calcCommission(TYPE_CARD_MASTERCARD, amountTransfer = 50_000_00))
+        assertEquals(620_00, calcCommission(TYPE_CARD_MAESTRO, amountTransfer = 100_000_00))
+        assertEquals(37_50, calcCommission(TYPE_CARD_VISA, amountTransfer = 5_000_00))
+        assertEquals(562_50, calcCommission(TYPE_CARD_MIR, amountTransfer = 75_000_00))
+        assertEquals(0, calcCommission(amountTransfer = 5_000_00))
+    }
 
-//        Другие карты
-        assertEquals(-1, calcCommission("Тинькофф", amountTransfer = 15_000_00))
-
-//        Отрицательный перевод или 0
-        assertEquals(-1, calcCommission(amountTransfer = -15_000_00))
-        assertEquals(-1, calcCommission(amountTransfer = 0))
-
+    @Test
+    fun brokenBuildTest() {
 //        Ломает сборку
 //        assertEquals(1, calcCommission(amountTransfer = 0))
     }
