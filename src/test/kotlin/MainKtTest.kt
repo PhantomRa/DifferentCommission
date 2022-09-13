@@ -21,17 +21,29 @@ class MainKtTest {
     }
 
     @Test
-    fun limitTransferTest() {
-        assertEquals(TRANSFER_LIMIT_ERROR, calcCommission(TYPE_CARD_MASTERCARD, 550_000_00, 70_000_00))
-        assertEquals(TRANSFER_ERROR, calcCommission(TYPE_CARD_MAESTRO, amountTransfer = 170_000_00))
-        assertEquals(TRANSFER_LIMIT_ERROR, calcCommission(TYPE_CARD_VISA, 550_000_00, 70_000_00))
-        assertEquals(TRANSFER_ERROR, calcCommission(TYPE_CARD_MIR, amountTransfer = 170_000_00))
-        assertEquals(TRANSFER_LIMIT_ERROR, calcCommission(sumInMonth = 50_000_00, amountTransfer = 7_000_00))
-        assertEquals(TRANSFER_ERROR, calcCommission(amountTransfer = 20_000_00))
-        assertEquals(TRANSFER_ERROR, calcCommission(TYPE_CARD_VISA, amountTransfer = 20_00))
+    fun negativeTransferTest() {
         assertEquals(TRANSFER_LIMIT_ERROR, calcCommission(TYPE_CARD_MASTERCARD, amountTransfer = -50_000_00))
         assertEquals(TRANSFER_LIMIT_ERROR, calcCommission(TYPE_CARD_VISA, amountTransfer = -50_000_00))
         assertEquals(TRANSFER_LIMIT_ERROR, calcCommission(TYPE_CARD_VK_PAY, amountTransfer = -5_000_00))
+    }
+
+    @Test
+    fun monthLimitTransferTest() {
+        assertEquals(TRANSFER_LIMIT_ERROR, calcCommission(TYPE_CARD_MASTERCARD, 550_000_00, 70_000_00))
+        assertEquals(TRANSFER_LIMIT_ERROR, calcCommission(TYPE_CARD_VISA, 550_000_00, 70_000_00))
+        assertEquals(TRANSFER_LIMIT_ERROR, calcCommission(sumInMonth = 50_000_00, amountTransfer = 7_000_00))
+    }
+
+    @Test
+    fun dayLimitTransferTest() {
+        assertEquals(TRANSFER_ERROR, calcCommission(TYPE_CARD_MAESTRO, amountTransfer = 170_000_00))
+        assertEquals(TRANSFER_ERROR, calcCommission(TYPE_CARD_MIR, amountTransfer = 170_000_00))
+        assertEquals(TRANSFER_ERROR, calcCommission(amountTransfer = 20_000_00))
+    }
+
+    @Test
+    fun minimalTransferTest() {
+        assertEquals(TRANSFER_ERROR, calcCommission(TYPE_CARD_VISA, amountTransfer = 20_00))
     }
 
     @Test
